@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.marcos.RadioApplet</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>COSMIC Radio</name>
+  <summary>Rádio Online para o COSMIC</summary>
+  <provides>
+    <id>com.marcos.RadioApplet</id>
+    <binaries>
+      <binary>cosmic-radio-applet</binary>
+    </binaries>
+  </provides>
+  <categories>
+    <category>COSMIC</category>
+  </categories>
+</component>

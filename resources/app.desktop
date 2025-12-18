@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=COSMIC Radio
+Comment=Rádio Online para o COSMIC
+Type=Application
+Icon=com.marcos.RadioApplet
+Exec=cosmic-radio-applet %F
+Terminal=false
+StartupNotify=true
+Categories=COSMIC
+Keywords=COSMIC
+NoDisplay=true
+X-CosmicApplet=true
+X-CosmicHoverPopup=Auto
+MimeType=

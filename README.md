@@ -21,6 +21,22 @@ A modern online radio player integrated into the COSMIC Desktop panel, developed
 
 #### Prerequisites
 
+Ensure `alsa-utils` is installed on your system:
+
+```bash
+# Debian/Ubuntu
+sudo apt install alsa-utils
+
+# Arch Linux
+sudo pacman -S alsa-utils
+
+# Fedora
+sudo dnf install alsa-utils
+
+# OpenSUSE
+sudo zypper install alsa-utils
+```
+
 Make sure you have `mpv` installed on your system:
 
 ```bash
@@ -32,6 +48,26 @@ sudo dnf install mpv
 
 # Ubuntu/Pop!_OS
 sudo apt install mpv
+```
+
+#### System Dependencies for Building
+
+To compile the project, you'll need the following development packages:
+
+**For Debian/Ubuntu/Linux Mint/Pop!_OS:**
+```bash
+sudo apt update
+sudo apt install -y pkg-config libxkbcommon-dev libwayland-dev libssl-dev libasound2-dev
+```
+
+**For Fedora/RHEL/CentOS:**
+```bash
+sudo dnf install pkgconf-pkg-config libxkbcommon-devel wayland-devel openssl-devel alsa-lib-devel
+```
+
+**For Arch Linux/Manjaro:**
+```bash
+sudo pacman -S pkgconf libxkbcommon wayland openssl alsa-lib
 ```
 
 #### Compile and Install

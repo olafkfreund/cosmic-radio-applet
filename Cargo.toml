@@ -3,6 +3,11 @@ name = "cosmic-radio-applet"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "cosmic_radio_applet_lib"
+path = "src/lib.rs"
+test = true
+
 [dependencies]
 i18n-embed-fl = "0.10"
 rust-embed = "8.7.2"
@@ -12,6 +17,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 url = "2.5"
 tracing = "0.1"
+thiserror = "2.0"
 
 [dependencies.i18n-embed]
 version = "0.16"

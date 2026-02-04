@@ -1,5 +1,8 @@
 # COSMIC Radio Applet
 
+[![CI](https://github.com/marcossl10/cosmic-radio-applet/workflows/CI/badge.svg)](https://github.com/marcossl10/cosmic-radio-applet/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 [English](#english) | [Português](#português)
 
 ---

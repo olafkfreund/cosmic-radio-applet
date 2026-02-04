@@ -1,6 +1,7 @@
 use crate::api::{self, Station};
 use crate::audio::AudioManager;
 use crate::config::Config;
+use crate::fl;
 use cosmic::cosmic_config::CosmicConfigEntry;
 use cosmic::iced::widget::text_input;
 use cosmic::iced::{window::Id, Alignment, Length, Task};
@@ -118,16 +119,16 @@ impl cosmic::Application for AppModel {
     }
 
     fn view_window(&self, _id: Id) -> Element<'_, Self::Message> {
-        let title = widget::text("COSMIC Radio").size(24);
+        let title = widget::text(fl!("window-title")).size(24);
 
         // Search Bar
-        let search_input = text_input("Search stations (e.g., Jazz)...", &self.search_query)
+        let search_input = text_input(&fl!("search-placeholder"), &self.search_query)
             .on_input(Message::SearchInputChanged)
             .on_submit(Message::PerformSearch)
             .padding(10);
 
         let search_btn =
-            cosmic::iced::widget::button("Search").on_press(Message::PerformSearch);
+            cosmic::iced::widget::button(widget::text(fl!("search-button"))).on_press(Message::PerformSearch);
 
         let search_row = widget::row()
             .spacing(10)
@@ -138,23 +139,23 @@ impl cosmic::Application for AppModel {
         let mut stations_list = widget::column().spacing(5);
 
         if self.is_searching {
-            stations_list = stations_list.push(widget::text("Searching..."));
+            stations_list = stations_list.push(widget::text(fl!("searching-status")));
         } else if let Some(err) = &self.error_message {
-            stations_list = stations_list.push(widget::text(format!("Error: {}", err)));
+            stations_list = stations_list.push(widget::text(format!("{} {}", fl!("error-message"), err)));
         } else if self.search_query.is_empty() && self.search_results.is_empty() {
-            stations_list = stations_list.push(widget::text("My Favorites:").size(18));
+            stations_list = stations_list.push(widget::text(fl!("favorites-header")).size(18));
             if self.config.favorites.is_empty() {
-                stations_list = stations_list.push(widget::text("No favorites saved."));
+                stations_list = stations_list.push(widget::text(fl!("no-favorites")));
             }
             for station in &self.config.favorites {
                 stations_list = stations_list.push(self.view_station_row(station, true));
             }
         } else {
-            let back_btn = cosmic::iced::widget::button("← Back to Favorites")
+            let back_btn = cosmic::iced::widget::button(widget::text(fl!("back-to-favorites")))
                 .on_press(Message::ClearSearch);
 
             stations_list = stations_list.push(back_btn);
-            stations_list = stations_list.push(widget::text("Search Results:").size(18));
+            stations_list = stations_list.push(widget::text(fl!("search-results-header")).size(18));
             for station in &self.search_results {
                 let is_fav = self
                     .config

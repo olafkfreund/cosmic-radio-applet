@@ -3,11 +3,13 @@ use crate::audio::AudioManager;
 use crate::config::Config;
 use crate::fl;
 use cosmic::cosmic_config::CosmicConfigEntry;
+use cosmic::iced::event::{self, Event};
+use cosmic::iced::keyboard::{key::Named, Key};
 use cosmic::iced::widget::text_input;
-use cosmic::iced::{window::Id, Alignment, Length, Task};
+use cosmic::iced::{window::Id, Alignment, Length, Subscription, Task};
 use cosmic::iced_winit::commands::popup::{destroy_popup, get_popup};
 use cosmic::prelude::*;
-use cosmic::widget::{self, icon};
+use cosmic::widget::{self, icon, slider};
 use tracing::{debug, error, info, warn};
 
 pub struct AppModel {
@@ -40,6 +42,15 @@ pub enum Message {
     PlayStation(Station),
     ToggleFavorite(Station),
     ClearSearch,
+
+    // Volume control
+    VolumeChanged(f32),
+    VolumeUp,
+    VolumeDown,
+
+    // Keyboard shortcuts
+    TogglePlayPause,
+    KeyboardEvent(Event),
 }
 
 impl cosmic::Application for AppModel {
@@ -59,9 +70,8 @@ impl cosmic::Application for AppModel {
         core: cosmic::Core,
         _flags: Self::Flags,
     ) -> (Self, Task<cosmic::Action<Self::Message>>) {
-        let config_handler =
-            cosmic::cosmic_config::Config::new(Self::APP_ID, Config::VERSION)
-                .expect("Failed to create config handler");
+        let config_handler = cosmic::cosmic_config::Config::new(Self::APP_ID, Config::VERSION)
+            .expect("Failed to create config handler");
 
         let config = match Config::get_entry(&config_handler) {
             Ok(c) => {
@@ -84,7 +94,7 @@ impl cosmic::Application for AppModel {
         );
 
         let audio = AudioManager::new();
-        audio.set_volume(config.volume as f32 / 100.0);
+        audio.set_volume(config.volume as f32);
 
         let app = AppModel {
             core,
@@ -106,6 +116,15 @@ impl cosmic::Application for AppModel {
         Some(Message::PopupClosed(id))
     }
 
+    fn subscription(&self) -> Subscription<Self::Message> {
+        // Subscribe to keyboard events when popup is open
+        if self.popup.is_some() {
+            event::listen().map(Message::KeyboardEvent)
+        } else {
+            Subscription::none()
+        }
+    }
+
     fn view(&self) -> Element<'_, Self::Message> {
         widget::container(
             cosmic::widget::button::custom(icon::from_name("multimedia-player-symbolic").size(16))
@@ -121,14 +140,70 @@ impl cosmic::Application for AppModel {
     fn view_window(&self, _id: Id) -> Element<'_, Self::Message> {
         let title = widget::text(fl!("window-title")).size(24);
 
+        // Now Playing section (if playing)
+        let now_playing: Element<'_, Message> = if let Some(station) = &self.current_station {
+            let status_icon = if self.is_playing {
+                "media-playback-pause-symbolic"
+            } else {
+                "media-playback-stop-symbolic"
+            };
+
+            widget::column()
+                .spacing(8)
+                .push(
+                    widget::row()
+                        .spacing(10)
+                        .align_y(Alignment::Center)
+                        .push(icon::from_name(status_icon).size(20))
+                        .push(
+                            widget::text(&station.name)
+                                .size(16)
+                                .width(Length::Fill),
+                        )
+                        .push(
+                            cosmic::iced::widget::button(icon::from_name(
+                                "media-playback-stop-symbolic",
+                            ))
+                            .on_press(Message::TogglePlayPause),
+                        ),
+                )
+                .into()
+        } else {
+            widget::text(fl!("not-playing")).size(14).into()
+        };
+
+        // Volume control section
+        let volume_section = {
+            let volume_label = format!("{} {}%", fl!("volume"), self.config.volume);
+            let volume_icon = if self.config.volume == 0 {
+                "audio-volume-muted-symbolic"
+            } else if self.config.volume < 33 {
+                "audio-volume-low-symbolic"
+            } else if self.config.volume < 66 {
+                "audio-volume-medium-symbolic"
+            } else {
+                "audio-volume-high-symbolic"
+            };
+
+            widget::row()
+                .spacing(10)
+                .align_y(Alignment::Center)
+                .push(icon::from_name(volume_icon).size(20))
+                .push(
+                    slider(0.0..=100.0, self.config.volume as f32, Message::VolumeChanged)
+                        .width(Length::Fill),
+                )
+                .push(widget::text(volume_label).size(14).width(Length::Shrink))
+        };
+
         // Search Bar
         let search_input = text_input(&fl!("search-placeholder"), &self.search_query)
             .on_input(Message::SearchInputChanged)
             .on_submit(Message::PerformSearch)
             .padding(10);
 
-        let search_btn =
-            cosmic::iced::widget::button(widget::text(fl!("search-button"))).on_press(Message::PerformSearch);
+        let search_btn = cosmic::iced::widget::button(widget::text(fl!("search-button")))
+            .on_press(Message::PerformSearch);
 
         let search_row = widget::row()
             .spacing(10)
@@ -141,7 +216,8 @@ impl cosmic::Application for AppModel {
         if self.is_searching {
             stations_list = stations_list.push(widget::text(fl!("searching-status")));
         } else if let Some(err) = &self.error_message {
-            stations_list = stations_list.push(widget::text(format!("{} {}", fl!("error-message"), err)));
+            stations_list =
+                stations_list.push(widget::text(format!("{} {}", fl!("error-message"), err)));
         } else if self.search_query.is_empty() && self.search_results.is_empty() {
             stations_list = stations_list.push(widget::text(fl!("favorites-header")).size(18));
             if self.config.favorites.is_empty() {
@@ -166,12 +242,24 @@ impl cosmic::Application for AppModel {
             }
         }
 
+        // Keyboard shortcuts hint
+        let shortcuts_hint = widget::text(fl!("shortcuts-hint"))
+            .size(11)
+            .class(cosmic::theme::Text::Color(cosmic::iced::Color::from_rgb(
+                0.5, 0.5, 0.5,
+            )));
+
         let content = widget::column()
             .padding(20)
-            .spacing(15)
+            .spacing(12)
             .push(title)
+            .push(widget::divider::horizontal::light())
+            .push(now_playing)
+            .push(volume_section)
+            .push(widget::divider::horizontal::light())
             .push(search_row)
-            .push(widget::scrollable(stations_list).height(300));
+            .push(widget::scrollable(stations_list).height(250))
+            .push(shortcuts_hint);
 
         self.core.applet.popup_container(content).into()
     }
@@ -269,11 +357,62 @@ impl cosmic::Application for AppModel {
                     self.config.favorites.push(station.clone());
                     debug!("Added to favorites: {}", station.name);
                 }
-
-                if let Err(e) = self.config.write_entry(&self.config_handler) {
-                    error!("Failed to save config: {:?}", e);
-                } else {
-                    debug!("Config saved with {} favorites", self.config.favorites.len());
+                self.save_config();
+            }
+            Message::VolumeChanged(vol) => {
+                let volume = vol.round() as u8;
+                self.config.volume = volume;
+                self.audio.set_volume(volume as f32);
+                debug!("Volume changed to {}%", volume);
+                self.save_config();
+            }
+            Message::VolumeUp => {
+                let new_vol = (self.config.volume as i16 + 5).min(100) as u8;
+                self.config.volume = new_vol;
+                self.audio.set_volume(new_vol as f32);
+                debug!("Volume up to {}%", new_vol);
+                self.save_config();
+            }
+            Message::VolumeDown => {
+                let new_vol = (self.config.volume as i16 - 5).max(0) as u8;
+                self.config.volume = new_vol;
+                self.audio.set_volume(new_vol as f32);
+                debug!("Volume down to {}%", new_vol);
+                self.save_config();
+            }
+            Message::TogglePlayPause => {
+                if self.is_playing {
+                    self.audio.stop();
+                    self.is_playing = false;
+                    debug!("Paused playback via shortcut");
+                } else if let Some(station) = &self.current_station {
+                    self.audio
+                        .play(station.url_resolved.clone(), self.config.volume);
+                    self.is_playing = true;
+                    debug!("Resumed playback via shortcut: {}", station.name);
+                }
+            }
+            Message::KeyboardEvent(event) => {
+                if let Event::Keyboard(keyboard_event) = event {
+                    if let cosmic::iced::keyboard::Event::KeyPressed { key, .. } = keyboard_event {
+                        match key {
+                            Key::Named(Named::Space) => {
+                                return self.update(Message::TogglePlayPause);
+                            }
+                            Key::Named(Named::ArrowUp) => {
+                                return self.update(Message::VolumeUp);
+                            }
+                            Key::Named(Named::ArrowDown) => {
+                                return self.update(Message::VolumeDown);
+                            }
+                            Key::Named(Named::Escape) => {
+                                if let Some(p) = self.popup.take() {
+                                    return destroy_popup(p);
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
                 }
             }
         }
@@ -314,5 +453,13 @@ impl AppModel {
                     .on_press(Message::ToggleFavorite(station.clone())),
             )
             .into()
+    }
+
+    fn save_config(&self) {
+        if let Err(e) = self.config.write_entry(&self.config_handler) {
+            error!("Failed to save config: {:?}", e);
+        } else {
+            debug!("Config saved");
+        }
     }
 }

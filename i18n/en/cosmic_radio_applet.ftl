@@ -8,3 +8,10 @@ favorites-header = My Favorites:
 no-favorites = No favorites saved.
 back-to-favorites = ← Back to Favorites
 search-results-header = Search Results:
+
+# Volume control
+volume = Volume:
+not-playing = No station playing
+
+# Keyboard shortcuts
+shortcuts-hint = Space: play/pause • ↑↓: volume • Esc: close

@@ -23,6 +23,7 @@ A modern online radio player integrated into the COSMIC Desktop panel, developed
 - **Volume Control**: Interactive slider with live adjustment and visual feedback (muted/low/medium/high icons).
 - **Keyboard Shortcuts**: Quick controls without mouse - Space (play/pause), Arrow keys (volume), Escape (close).
 - **Internationalization**: Multi-language support with Fluent localization system.
+- **MPRIS2 Desktop Integration**: Full D-Bus media player interface — control playback via `playerctl`, media keys, and desktop widgets.
 - **Security Hardened**: URL validation, private IP blocking, and response size limits.
 
 ### ⌨️ Keyboard Shortcuts
@@ -33,6 +34,29 @@ A modern online radio player integrated into the COSMIC Desktop panel, developed
 | `↑` | Volume up (+5%) |
 | `↓` | Volume down (-5%) |
 | `Esc` | Close popup |
+
+### 🎵 MPRIS2 Desktop Integration
+
+The applet registers as an MPRIS2-compliant media player on D-Bus, so any desktop media controller can discover and control it.
+
+**Control with `playerctl`:**
+```bash
+playerctl -p cosmic_radio_applet status       # Playing / Stopped
+playerctl -p cosmic_radio_applet metadata     # Station name, art, genre
+playerctl -p cosmic_radio_applet play         # Resume playback
+playerctl -p cosmic_radio_applet pause        # Stop playback
+playerctl -p cosmic_radio_applet play-pause   # Toggle
+playerctl -p cosmic_radio_applet volume 0.7   # Set volume to 70%
+```
+
+Works with GNOME/KDE media widgets, `playerctld`, hardware media keys, and any MPRIS-aware application.
+
+| MPRIS Property | Value |
+|----------------|-------|
+| Bus name | `org.mpris.MediaPlayer2.cosmic_radio_applet` |
+| Identity | COSMIC Radio |
+| Metadata | Station name, favicon, homepage, genre tags |
+| Capabilities | Play, Pause, Stop, Volume, Raise |
 
 ### 🚀 Installation
 
@@ -179,7 +203,7 @@ cargo clippy         # Run linter
 This project uses GitHub Actions for continuous integration with:
 - Format and lint checks
 - Debug and release builds
-- Unit tests (57 tests)
+- Unit tests (113 tests)
 - Nix flake builds
 - Security audit (`cargo-audit`)
 - Dependency policy checks (`cargo-deny`)
@@ -213,6 +237,7 @@ Um player de rádio online moderno e integrado ao painel do COSMIC Desktop, dese
 - **Controle de Volume**: Slider interativo com ajuste em tempo real e feedback visual (ícones mudo/baixo/médio/alto).
 - **Atalhos de Teclado**: Controles rápidos sem mouse - Espaço (play/pause), Setas (volume), Escape (fechar).
 - **Internacionalização**: Suporte multi-idioma com sistema de localização Fluent.
+- **Integração MPRIS2**: Interface D-Bus completa — controle a reprodução via `playerctl`, teclas de mídia e widgets do desktop.
 - **Segurança Reforçada**: Validação de URLs, bloqueio de IPs privados e limites de resposta.
 
 ### ⌨️ Atalhos de Teclado
@@ -223,6 +248,29 @@ Um player de rádio online moderno e integrado ao painel do COSMIC Desktop, dese
 | `↑` | Aumentar volume (+5%) |
 | `↓` | Diminuir volume (-5%) |
 | `Esc` | Fechar popup |
+
+### 🎵 Integração MPRIS2
+
+O applet se registra como media player compatível com MPRIS2 no D-Bus, permitindo que qualquer controlador de mídia do desktop o descubra e controle.
+
+**Controle com `playerctl`:**
+```bash
+playerctl -p cosmic_radio_applet status       # Playing / Stopped
+playerctl -p cosmic_radio_applet metadata     # Nome da estação, arte, gênero
+playerctl -p cosmic_radio_applet play         # Retomar reprodução
+playerctl -p cosmic_radio_applet pause        # Parar reprodução
+playerctl -p cosmic_radio_applet play-pause   # Alternar
+playerctl -p cosmic_radio_applet volume 0.7   # Volume em 70%
+```
+
+Funciona com widgets de mídia GNOME/KDE, `playerctld`, teclas de mídia do teclado e qualquer aplicação compatível com MPRIS.
+
+| Propriedade MPRIS | Valor |
+|-------------------|-------|
+| Nome do barramento | `org.mpris.MediaPlayer2.cosmic_radio_applet` |
+| Identidade | COSMIC Radio |
+| Metadados | Nome da estação, favicon, homepage, tags de gênero |
+| Capacidades | Play, Pause, Stop, Volume, Raise |
 
 ### 🚀 Instalação NixOS
 
@@ -306,7 +354,7 @@ cargo clippy         # Executar linter
 Este projeto usa GitHub Actions para integração contínua com:
 - Verificações de formato e lint
 - Builds de debug e release
-- Testes unitários (57 testes)
+- Testes unitários (113 testes)
 - Builds com Nix flake
 - Auditoria de segurança (`cargo-audit`)
 - Verificações de política de dependências (`cargo-deny`)

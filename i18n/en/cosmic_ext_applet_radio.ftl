@@ -1,5 +1,5 @@
-app-title = COSMIC Radio
-window-title = COSMIC Radio
+app-title = Radio for COSMIC
+window-title = Radio for COSMIC
 search-placeholder = Search stations (e.g., Jazz)...
 search-button = Search
 searching-status = Searching...

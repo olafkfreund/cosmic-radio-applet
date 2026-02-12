@@ -1,9 +1,9 @@
 [Desktop Entry]
-Name=COSMIC Radio
-Comment=Rádio Online para o COSMIC
+Name=Radio for COSMIC
+Comment=Online Radio for the COSMIC Desktop
 Type=Application
 Icon=com.marcos.RadioApplet
-Exec=cosmic-radio-applet %F
+Exec=cosmic-ext-applet-radio %F
 Terminal=false
 StartupNotify=true
 Categories=COSMIC

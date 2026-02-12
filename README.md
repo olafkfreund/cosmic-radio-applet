@@ -1,4 +1,4 @@
-# COSMIC Radio Applet
+# Radio for COSMIC
 
 [![CI](https://github.com/marcossl10/cosmic-radio-applet/workflows/CI/badge.svg)](https://github.com/marcossl10/cosmic-radio-applet/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -9,14 +9,14 @@
 
 ## English
 
-A modern online radio player integrated into the COSMIC Desktop panel, developed exclusively for the COSMIC ecosystem using Rust and libcosmic.
+A modern online radio player integrated into the COSMIC Desktop panel, developed for the COSMIC ecosystem using Rust and libcosmic.
 
 <img src="resources/banner.svg" width="600" alt="Banner">
 
 ### ✨ Features
 
 - **Global Search**: Access thousands of radio stations worldwide via the `radio-browser.info` API.
-- **Native Interface**: Design perfectly integrated with COSMIC Desktop, following the system's visual guidelines.
+- **Native Interface**: Design perfectly integrated with the COSMIC Desktop, following the system's visual guidelines.
 - **Interactive Playback**: Click on a station to Play/Pause (Stop).
 - **Favorites List**: Save your preferred stations for quick access.
 - **High-Quality Audio**: Uses `mpv` as the playback backend, ensuring stability and low resource consumption.
@@ -41,20 +41,20 @@ The applet registers as an MPRIS2-compliant media player on D-Bus, so any deskto
 
 **Control with `playerctl`:**
 ```bash
-playerctl -p cosmic_radio_applet status       # Playing / Stopped
-playerctl -p cosmic_radio_applet metadata     # Station name, art, genre
-playerctl -p cosmic_radio_applet play         # Resume playback
-playerctl -p cosmic_radio_applet pause        # Stop playback
-playerctl -p cosmic_radio_applet play-pause   # Toggle
-playerctl -p cosmic_radio_applet volume 0.7   # Set volume to 70%
+playerctl -p cosmic_ext_applet_radio status       # Playing / Stopped
+playerctl -p cosmic_ext_applet_radio metadata     # Station name, art, genre
+playerctl -p cosmic_ext_applet_radio play         # Resume playback
+playerctl -p cosmic_ext_applet_radio pause        # Stop playback
+playerctl -p cosmic_ext_applet_radio play-pause   # Toggle
+playerctl -p cosmic_ext_applet_radio volume 0.7   # Set volume to 70%
 ```
 
 Works with GNOME/KDE media widgets, `playerctld`, hardware media keys, and any MPRIS-aware application.
 
 | MPRIS Property | Value |
 |----------------|-------|
-| Bus name | `org.mpris.MediaPlayer2.cosmic_radio_applet` |
-| Identity | COSMIC Radio |
+| Bus name | `org.mpris.MediaPlayer2.cosmic_ext_applet_radio` |
+| Identity | Radio for COSMIC |
 | Metadata | Station name, favicon, homepage, genre tags |
 | Capabilities | Play, Pause, Stop, Volume, Raise |
 
@@ -142,9 +142,9 @@ nix build github:marcossl10/cosmic-radio-applet
   outputs = { nixpkgs, cosmic-radio-applet, ... }: {
     nixosConfigurations.yourhost = nixpkgs.lib.nixosSystem {
       modules = [
-        cosmic-radio-applet.nixosModules.cosmic-radio-applet
+        cosmic-radio-applet.nixosModules.cosmic-ext-applet-radio
         {
-          programs.cosmic-radio-applet = {
+          programs.cosmic-ext-applet-radio = {
             enable = true;
             settings.volume = 75;
           };
@@ -158,9 +158,9 @@ nix build github:marcossl10/cosmic-radio-applet
 **Home Manager Module:**
 ```nix
 {
-  imports = [ cosmic-radio-applet.homeManagerModules.cosmic-radio-applet ];
+  imports = [ cosmic-radio-applet.homeManagerModules.cosmic-ext-applet-radio ];
 
-  programs.cosmic-radio-applet = {
+  programs.cosmic-ext-applet-radio = {
     enable = true;
     autostart = true;
     settings = {
@@ -223,14 +223,14 @@ This project is under the [MIT](LICENSE) license.
 
 ## Português
 
-Um player de rádio online moderno e integrado ao painel do COSMIC Desktop, desenvolvido exclusivamente para o ecossistema COSMIC usando Rust e libcosmic.
+Um player de rádio online moderno e integrado ao painel do COSMIC Desktop, desenvolvido para o ecossistema COSMIC usando Rust e libcosmic.
 
 <img src="resources/banner.svg" width="600" alt="Banner">
 
 ### ✨ Funcionalidades
 
 - **Busca Global**: Acesse milhares de estações de rádio de todo o mundo via API `radio-browser.info`.
-- **Interface Nativa**: Design perfeitamente integrado ao COSMIC Desktop.
+- **Interface Nativa**: Design perfeitamente integrado ao desktop COSMIC.
 - **Controle de Reprodução**: Clique na rádio para dar Play/Pause (Stop).
 - **Lista de Favoritos**: Salve suas estações preferidas.
 - **Áudio de Alta Qualidade**: Utiliza o `mpv` como backend de reprodução.
@@ -255,20 +255,20 @@ O applet se registra como media player compatível com MPRIS2 no D-Bus, permitin
 
 **Controle com `playerctl`:**
 ```bash
-playerctl -p cosmic_radio_applet status       # Playing / Stopped
-playerctl -p cosmic_radio_applet metadata     # Nome da estação, arte, gênero
-playerctl -p cosmic_radio_applet play         # Retomar reprodução
-playerctl -p cosmic_radio_applet pause        # Parar reprodução
-playerctl -p cosmic_radio_applet play-pause   # Alternar
-playerctl -p cosmic_radio_applet volume 0.7   # Volume em 70%
+playerctl -p cosmic_ext_applet_radio status       # Playing / Stopped
+playerctl -p cosmic_ext_applet_radio metadata     # Nome da estação, arte, gênero
+playerctl -p cosmic_ext_applet_radio play         # Retomar reprodução
+playerctl -p cosmic_ext_applet_radio pause        # Parar reprodução
+playerctl -p cosmic_ext_applet_radio play-pause   # Alternar
+playerctl -p cosmic_ext_applet_radio volume 0.7   # Volume em 70%
 ```
 
 Funciona com widgets de mídia GNOME/KDE, `playerctld`, teclas de mídia do teclado e qualquer aplicação compatível com MPRIS.
 
 | Propriedade MPRIS | Valor |
 |-------------------|-------|
-| Nome do barramento | `org.mpris.MediaPlayer2.cosmic_radio_applet` |
-| Identidade | COSMIC Radio |
+| Nome do barramento | `org.mpris.MediaPlayer2.cosmic_ext_applet_radio` |
+| Identidade | Radio for COSMIC |
 | Metadados | Nome da estação, favicon, homepage, tags de gênero |
 | Capacidades | Play, Pause, Stop, Volume, Raise |
 
@@ -293,9 +293,9 @@ nix build github:marcossl10/cosmic-radio-applet
   outputs = { nixpkgs, cosmic-radio-applet, ... }: {
     nixosConfigurations.seuhost = nixpkgs.lib.nixosSystem {
       modules = [
-        cosmic-radio-applet.nixosModules.cosmic-radio-applet
+        cosmic-radio-applet.nixosModules.cosmic-ext-applet-radio
         {
-          programs.cosmic-radio-applet = {
+          programs.cosmic-ext-applet-radio = {
             enable = true;
             settings.volume = 75;
           };
@@ -309,9 +309,9 @@ nix build github:marcossl10/cosmic-radio-applet
 **Módulo Home Manager:**
 ```nix
 {
-  imports = [ cosmic-radio-applet.homeManagerModules.cosmic-radio-applet ];
+  imports = [ cosmic-radio-applet.homeManagerModules.cosmic-ext-applet-radio ];
 
-  programs.cosmic-radio-applet = {
+  programs.cosmic-ext-applet-radio = {
     enable = true;
     autostart = true;
     settings = {

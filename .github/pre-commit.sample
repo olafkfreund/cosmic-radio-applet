@@ -1,5 +1,5 @@
 #!/bin/bash
-# Pre-commit hook for COSMIC Radio Applet
+# Pre-commit hook for Radio for COSMIC applet
 # Installation: cp .github/pre-commit.sample .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
 
 set -e

@@ -6,7 +6,7 @@ use std::sync::{Arc, Mutex};
 use tracing::{debug, error, warn};
 use url::Url;
 
-const MPV_SOCKET_PATH: &str = "/tmp/cosmic-radio-mpv.sock";
+const MPV_SOCKET_PATH: &str = "/tmp/cosmic-ext-radio-mpv.sock";
 
 pub struct AudioManager {
     process: Arc<Mutex<Option<Child>>>,

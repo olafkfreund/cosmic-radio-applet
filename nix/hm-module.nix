@@ -1,30 +1,30 @@
-# Home Manager module for cosmic-radio-applet
+# Home Manager module for cosmic-ext-applet-radio
 flake:
 { config, lib, pkgs, ... }:
 
 with lib;
 
 let
-  cfg = config.programs.cosmic-radio-applet;
+  cfg = config.programs.cosmic-ext-applet-radio;
 
   # Get the package from the flake or use override
-  defaultPackage = flake.packages.${pkgs.stdenv.hostPlatform.system}.cosmic-radio-applet;
+  defaultPackage = flake.packages.${pkgs.stdenv.hostPlatform.system}.cosmic-ext-applet-radio;
 
   # Generate cosmic config JSON
-  configJson = pkgs.writeText "cosmic-radio-applet-config.json" (builtins.toJSON {
+  configJson = pkgs.writeText "cosmic-ext-applet-radio-config.json" (builtins.toJSON {
     favorites = cfg.settings.favorites;
     volume = cfg.settings.volume;
   });
 
 in {
-  options.programs.cosmic-radio-applet = {
-    enable = mkEnableOption "COSMIC Radio Applet - internet radio player for COSMIC Desktop panel";
+  options.programs.cosmic-ext-applet-radio = {
+    enable = mkEnableOption "Radio for COSMIC - internet radio player for the COSMIC Desktop panel";
 
     package = mkOption {
       type = types.package;
       default = defaultPackage;
-      defaultText = literalExpression "flake.packages.\${pkgs.stdenv.hostPlatform.system}.cosmic-radio-applet";
-      description = "The cosmic-radio-applet package to use.";
+      defaultText = literalExpression "flake.packages.\${pkgs.stdenv.hostPlatform.system}.cosmic-ext-applet-radio";
+      description = "The cosmic-ext-applet-radio package to use.";
     };
 
     autostart = mkOption {
@@ -141,7 +141,7 @@ in {
 
     # Verify mpv is in PATH
     warnings = optional (!config.programs.mpv.enable)
-      "cosmic-radio-applet requires mpv for audio playback. Consider enabling programs.mpv.";
+      "cosmic-ext-applet-radio requires mpv for audio playback. Consider enabling programs.mpv.";
   };
 
   meta.maintainers = with lib.maintainers; [ ];

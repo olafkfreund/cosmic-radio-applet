@@ -56,7 +56,7 @@ The README shows the current CI status:
 
 ### GitHub Actions Tab
 View detailed build logs at:
-`https://github.com/marcossl10/cosmic-radio-applet/actions`
+`https://github.com/marcossl10/cosmic-ext-applet-radio/actions`
 
 ## Common Scenarios
 
@@ -157,7 +157,7 @@ Subsequent builds: ~15-20 minutes
 For faster Nix builds, set up Cachix:
 
 1. Create account at https://app.cachix.org
-2. Create cache named `cosmic-radio-applet`
+2. Create cache named `cosmic-ext-applet-radio`
 3. Generate auth token
 4. Add as repository secret: `CACHIX_AUTH_TOKEN`
 

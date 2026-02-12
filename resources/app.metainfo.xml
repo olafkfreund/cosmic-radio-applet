@@ -3,12 +3,12 @@
   <id>com.marcos.RadioApplet</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT</project_license>
-  <name>COSMIC Radio</name>
-  <summary>Rádio Online para o COSMIC</summary>
+  <name>Radio for COSMIC</name>
+  <summary>Online radio player for the COSMIC Desktop</summary>
   <provides>
     <id>com.marcos.RadioApplet</id>
     <binaries>
-      <binary>cosmic-radio-applet</binary>
+      <binary>cosmic-ext-applet-radio</binary>
     </binaries>
   </provides>
   <categories>

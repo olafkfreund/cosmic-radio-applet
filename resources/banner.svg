@@ -16,8 +16,8 @@
     <path d="M140 100L150 20L160 120L170 50L180 140L190 40L200 110L210 60L220 90" stroke="url(#paint2_linear_neon)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
     
     <!-- Text -->
-    <text x="250" y="65" fill="white" font-family="Inter, Roboto, sans-serif" font-size="56" font-weight="800" letter-spacing="-0.02em">COSMIC</text>
-    <text x="250" y="125" fill="url(#paint2_linear_neon)" font-family="Inter, Roboto, sans-serif" font-size="48" font-weight="700">Radio</text>
+    <text x="250" y="65" fill="white" font-family="Inter, Roboto, sans-serif" font-size="56" font-weight="800" letter-spacing="-0.02em">Radio</text>
+    <text x="250" y="125" fill="url(#paint2_linear_neon)" font-family="Inter, Roboto, sans-serif" font-size="36" font-weight="700">for COSMIC</text>
   </g>
 
   <!-- Gradients -->

@@ -1,5 +1,5 @@
 {
-  description = "COSMIC Radio Applet - Internet radio player for COSMIC Desktop";
+  description = "Radio for COSMIC - Internet radio player for the COSMIC Desktop";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -60,10 +60,10 @@
 
       in {
         packages = {
-          default = self.packages.${system}.cosmic-radio-applet;
+          default = self.packages.${system}.cosmic-ext-applet-radio;
 
-          cosmic-radio-applet = pkgs.rustPlatform.buildRustPackage rec {
-            pname = "cosmic-radio-applet";
+          cosmic-ext-applet-radio = pkgs.rustPlatform.buildRustPackage rec {
+            pname = "cosmic-ext-applet-radio";
             version = "0.2.0";
 
             src = pkgs.lib.cleanSource ./.;
@@ -93,18 +93,18 @@
               install -Dm644 resources/icon.svg $out/share/icons/hicolor/scalable/apps/com.marcos.RadioApplet.svg
 
               # Wrap binary with runtime dependencies
-              wrapProgram $out/bin/cosmic-radio-applet \
+              wrapProgram $out/bin/cosmic-ext-applet-radio \
                 --prefix PATH : ${pkgs.lib.makeBinPath runtimeDeps} \
                 --prefix LD_LIBRARY_PATH : ${libPath}
             '';
 
             meta = with pkgs.lib; {
-              description = "Internet radio player applet for COSMIC Desktop";
+              description = "Internet radio player applet for the COSMIC Desktop";
               homepage = "https://github.com/marcossl10/cosmic-radio-applet";
               license = licenses.mit;
               maintainers = [ ];
               platforms = platforms.linux;
-              mainProgram = "cosmic-radio-applet";
+              mainProgram = "cosmic-ext-applet-radio";
             };
           };
         };
@@ -132,7 +132,7 @@
           LD_LIBRARY_PATH = libPath;
 
           shellHook = ''
-            echo "COSMIC Radio Applet development environment"
+            echo "Radio for COSMIC - development environment"
             echo "Run 'cargo build' to build, 'cargo run' to test"
           '';
         };
@@ -140,14 +140,14 @@
     ) // {
       # NixOS module
       nixosModules = {
-        default = self.nixosModules.cosmic-radio-applet;
-        cosmic-radio-applet = import ./nix/nixos-module.nix self;
+        default = self.nixosModules.cosmic-ext-applet-radio;
+        cosmic-ext-applet-radio = import ./nix/nixos-module.nix self;
       };
 
       # Home-manager module
       homeManagerModules = {
-        default = self.homeManagerModules.cosmic-radio-applet;
-        cosmic-radio-applet = import ./nix/hm-module.nix self;
+        default = self.homeManagerModules.cosmic-ext-applet-radio;
+        cosmic-ext-applet-radio = import ./nix/hm-module.nix self;
       };
     };
 }

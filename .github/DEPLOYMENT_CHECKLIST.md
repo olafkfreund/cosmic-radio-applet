@@ -58,7 +58,7 @@ main
 ### Create Cache
 1. Visit https://app.cachix.org
 2. Sign up / Sign in
-3. Create new cache: `cosmic-radio-applet`
+3. Create new cache: `cosmic-ext-applet-radio`
 4. Set visibility: Public (for open source)
 
 ### Configure Token
@@ -329,10 +329,10 @@ CI/CD is working correctly when:
 
 ## Additional Resources
 
-- Workflow file: `/home/olafkfreund/Source/GitHub/cosmic-radio-applet/.github/workflows/ci.yml`
-- Full documentation: `/home/olafkfreund/Source/GitHub/cosmic-radio-applet/.github/CI_CD.md`
-- Quick start: `/home/olafkfreund/Source/GitHub/cosmic-radio-applet/.github/QUICKSTART.md`
-- Pre-commit hook: `/home/olafkfreund/Source/GitHub/cosmic-radio-applet/.github/pre-commit.sample`
+- Workflow file: `/home/olafkfreund/Source/GitHub/cosmic-ext-applet-radio/.github/workflows/ci.yml`
+- Full documentation: `/home/olafkfreund/Source/GitHub/cosmic-ext-applet-radio/.github/CI_CD.md`
+- Quick start: `/home/olafkfreund/Source/GitHub/cosmic-ext-applet-radio/.github/QUICKSTART.md`
+- Pre-commit hook: `/home/olafkfreund/Source/GitHub/cosmic-ext-applet-radio/.github/pre-commit.sample`
 
 ## Sign-off
 

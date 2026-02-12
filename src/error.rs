@@ -1,4 +1,4 @@
-//! Custom error types for cosmic-radio-applet
+//! Custom error types for cosmic-ext-applet-radio
 //!
 //! These error types are defined for future integration. Currently the application
 //! uses simpler error handling, but these types provide a foundation for more

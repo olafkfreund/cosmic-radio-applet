@@ -30,7 +30,7 @@ cargo clippy --all-features -- -W clippy::pedantic
 
 ## Architecture Overview
 
-This is a COSMIC Desktop panel applet that plays internet radio stations via the radio-browser.info API.
+This is a third-party COSMIC Desktop panel applet (using the `cosmic-ext-` namespace) that plays internet radio stations via the radio-browser.info API.
 
 ### Module Structure
 
@@ -66,7 +66,7 @@ This is a COSMIC Desktop panel applet that plays internet radio stations via the
 ## Adding Translations
 
 1. Create new directory: `i18n/{locale}/`
-2. Add `cosmic_radio_applet.ftl` with translations
+2. Add `cosmic_ext_applet_radio.ftl` with translations
 3. Use `fl!("message-id")` macro in code
 
 ## NixOS Installation
@@ -75,7 +75,7 @@ This is a COSMIC Desktop panel applet that plays internet radio stations via the
 
 ```bash
 # Build the package
-nix build .#cosmic-radio-applet
+nix build .#cosmic-ext-applet-radio
 
 # Enter development shell
 nix develop
@@ -95,9 +95,9 @@ Add to your NixOS configuration:
   outputs = { self, nixpkgs, cosmic-radio-applet, ... }: {
     nixosConfigurations.yourhost = nixpkgs.lib.nixosSystem {
       modules = [
-        cosmic-radio-applet.nixosModules.cosmic-radio-applet
+        cosmic-radio-applet.nixosModules.cosmic-ext-applet-radio
         {
-          programs.cosmic-radio-applet = {
+          programs.cosmic-ext-applet-radio = {
             enable = true;
             autostart = true;  # Add to XDG autostart
             settings = {
@@ -124,9 +124,9 @@ Add to your Home Manager configuration:
 
 ```nix
 {
-  imports = [ cosmic-radio-applet.homeManagerModules.cosmic-radio-applet ];
+  imports = [ cosmic-radio-applet.homeManagerModules.cosmic-ext-applet-radio ];
 
-  programs.cosmic-radio-applet = {
+  programs.cosmic-ext-applet-radio = {
     enable = true;
     autostart = true;
     settings = {

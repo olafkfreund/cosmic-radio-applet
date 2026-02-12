@@ -105,8 +105,8 @@ async fn run_mpris_server(
     cmd_tx: mpsc::UnboundedSender<MprisCommand>,
     mut state_rx: mpsc::UnboundedReceiver<MprisStateUpdate>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let player = Player::builder("cosmic_radio_applet")
-        .identity("COSMIC Radio")
+    let player = Player::builder("cosmic_ext_applet_radio")
+        .identity("Radio for COSMIC")
         .desktop_entry("com.marcos.RadioApplet")
         .can_play(true)
         .can_pause(true)

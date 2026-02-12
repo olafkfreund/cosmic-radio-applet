@@ -1,4 +1,4 @@
-// Unit tests for cosmic-radio-applet modules
+// Unit tests for cosmic-ext-applet-radio modules
 // This file allows running tests without building the full application
 
 #[cfg(test)]

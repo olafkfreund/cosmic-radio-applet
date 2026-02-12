@@ -51,7 +51,7 @@ cargo test --release --locked
 ```
 
 **Artifacts:**
-- Binary: `cosmic-radio-applet-<commit-sha>`
+- Binary: `cosmic-ext-applet-radio-<commit-sha>`
 - Retention: 7 days
 - Access: Actions tab → specific workflow run
 
@@ -71,7 +71,7 @@ nix develop --command cargo build
 ```
 
 **Cachix Integration:**
-- Cache name: `cosmic-radio-applet`
+- Cache name: `cosmic-ext-applet-radio`
 - Set `CACHIX_AUTH_TOKEN` secret to enable push
 - Public cache available for faster builds
 
@@ -112,9 +112,9 @@ cargo deny check
 
 ### Cargo Caching
 Uses `Swatinem/rust-cache@v2` with profile-specific keys:
-- `cosmic-radio-applet-dev` - debug builds
-- `cosmic-radio-applet-release` - release builds
-- `cosmic-radio-applet-clippy` - clippy analysis
+- `cosmic-ext-applet-radio-dev` - debug builds
+- `cosmic-ext-applet-radio-release` - release builds
+- `cosmic-ext-applet-radio-clippy` - clippy analysis
 
 **Cache includes:**
 - `~/.cargo/registry` - crate downloads
@@ -301,7 +301,7 @@ When ready to add deployment:
 
 - **Status Badge:** Add to README.md
   ```markdown
-  ![CI](https://github.com/USERNAME/cosmic-radio-applet/workflows/CI/badge.svg)
+  ![CI](https://github.com/USERNAME/cosmic-ext-applet-radio/workflows/CI/badge.svg)
   ```
 
 - **Notifications:** Configure in GitHub settings

@@ -1,4 +1,4 @@
-name := 'cosmic-radio-applet'
+name := 'cosmic-ext-applet-radio'
 appid := 'com.marcos.RadioApplet'
 rootdir := ''
 prefix := '/usr'

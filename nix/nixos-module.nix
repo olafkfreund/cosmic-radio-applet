@@ -1,27 +1,27 @@
-# NixOS module for cosmic-radio-applet
+# NixOS module for cosmic-ext-applet-radio
 flake:
 { config, lib, pkgs, ... }:
 
 with lib;
 
 let
-  cfg = config.programs.cosmic-radio-applet;
+  cfg = config.programs.cosmic-ext-applet-radio;
 
   # Get the package from the flake or use override
-  defaultPackage = flake.packages.${pkgs.stdenv.hostPlatform.system}.cosmic-radio-applet;
+  defaultPackage = flake.packages.${pkgs.stdenv.hostPlatform.system}.cosmic-ext-applet-radio;
 
 in {
-  options.programs.cosmic-radio-applet = {
-    enable = mkEnableOption "COSMIC Radio Applet - internet radio player for COSMIC Desktop panel";
+  options.programs.cosmic-ext-applet-radio = {
+    enable = mkEnableOption "Radio for COSMIC - internet radio player for the COSMIC Desktop panel";
 
-    package = mkPackageOption pkgs "cosmic-radio-applet" {
+    package = mkPackageOption pkgs "cosmic-ext-applet-radio" {
       default = defaultPackage;
       example = literalExpression ''
-        pkgs.cosmic-radio-applet.override {
+        pkgs.cosmic-ext-applet-radio.override {
           # custom overrides
         }
       '';
-      description = "The cosmic-radio-applet package to use.";
+      description = "The cosmic-ext-applet-radio package to use.";
     };
 
     autostart = mkOption {
@@ -110,7 +110,7 @@ in {
       };
       default = { };
       description = ''
-        Configuration for cosmic-radio-applet.
+        Configuration for cosmic-ext-applet-radio.
         Settings are written to the COSMIC config system.
       '';
     };
@@ -144,13 +144,13 @@ in {
         assertion = config.services.xserver.desktopManager.cosmic.enable or false
           || config.services.desktopManager.cosmic.enable or false
           || true; # Allow installation without COSMIC for testing
-        message = "cosmic-radio-applet is designed for COSMIC Desktop but can be installed standalone.";
+        message = "cosmic-ext-applet-radio is designed for COSMIC Desktop but can be installed standalone.";
       }
     ];
 
     warnings = optional (!(config.services.xserver.desktopManager.cosmic.enable or false)
       && !(config.services.desktopManager.cosmic.enable or false))
-      "cosmic-radio-applet works best with COSMIC Desktop enabled.";
+      "cosmic-ext-applet-radio works best with COSMIC Desktop enabled.";
   };
 
   meta.maintainers = with lib.maintainers; [ ];

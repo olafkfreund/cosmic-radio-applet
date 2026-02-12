@@ -2,6 +2,7 @@ use crate::api::{self, Station};
 use crate::audio::AudioManager;
 use crate::config::Config;
 use crate::fl;
+use crate::mpris::{self, MprisStateUpdate};
 use cosmic::cosmic_config::CosmicConfigEntry;
 use cosmic::iced::event::{self, Event};
 use cosmic::iced::keyboard::{key::Named, Key};
@@ -10,6 +11,7 @@ use cosmic::iced::{window::Id, Alignment, Length, Subscription, Task};
 use cosmic::iced_winit::commands::popup::{destroy_popup, get_popup};
 use cosmic::prelude::*;
 use cosmic::widget::{self, icon, slider};
+use tokio::sync::mpsc;
 use tracing::{debug, error, info, warn};
 
 pub struct AppModel {
@@ -26,6 +28,9 @@ pub struct AppModel {
     current_station: Option<Station>,
     is_playing: bool,
     error_message: Option<String>,
+
+    // MPRIS
+    mpris_tx: Option<mpsc::UnboundedSender<MprisStateUpdate>>,
 }
 
 #[derive(Debug, Clone)]
@@ -51,6 +56,9 @@ pub enum Message {
     // Keyboard shortcuts
     TogglePlayPause,
     KeyboardEvent(Event),
+
+    // MPRIS D-Bus
+    MprisEvent(mpris::MprisEvent),
 }
 
 impl cosmic::Application for AppModel {
@@ -108,6 +116,7 @@ impl cosmic::Application for AppModel {
             current_station: None,
             is_playing: false,
             error_message: None,
+            mpris_tx: None,
         };
         (app, Task::none())
     }
@@ -117,12 +126,13 @@ impl cosmic::Application for AppModel {
     }
 
     fn subscription(&self) -> Subscription<Self::Message> {
-        // Subscribe to keyboard events when popup is open
-        if self.popup.is_some() {
+        let keyboard_sub = if self.popup.is_some() {
             event::listen().map(Message::KeyboardEvent)
         } else {
             Subscription::none()
-        }
+        };
+        let mpris_sub = mpris::mpris_subscription().map(Message::MprisEvent);
+        Subscription::batch([keyboard_sub, mpris_sub])
     }
 
     fn view(&self) -> Element<'_, Self::Message> {
@@ -338,6 +348,7 @@ impl cosmic::Application for AppModel {
                         .play(station.url_resolved.clone(), self.config.volume);
                     debug!("Playing: {}", station.name);
                 }
+                self.push_mpris_state();
             }
             Message::ClearSearch => {
                 self.search_query.clear();
@@ -365,6 +376,7 @@ impl cosmic::Application for AppModel {
                 self.audio.set_volume(volume as f32);
                 debug!("Volume changed to {}%", volume);
                 self.save_config();
+                self.push_mpris_state();
             }
             Message::VolumeUp => {
                 let new_vol = (self.config.volume as i16 + 5).min(100) as u8;
@@ -372,6 +384,7 @@ impl cosmic::Application for AppModel {
                 self.audio.set_volume(new_vol as f32);
                 debug!("Volume up to {}%", new_vol);
                 self.save_config();
+                self.push_mpris_state();
             }
             Message::VolumeDown => {
                 let new_vol = (self.config.volume as i16 - 5).max(0) as u8;
@@ -379,6 +392,7 @@ impl cosmic::Application for AppModel {
                 self.audio.set_volume(new_vol as f32);
                 debug!("Volume down to {}%", new_vol);
                 self.save_config();
+                self.push_mpris_state();
             }
             Message::TogglePlayPause => {
                 if self.is_playing {
@@ -391,7 +405,57 @@ impl cosmic::Application for AppModel {
                     self.is_playing = true;
                     debug!("Resumed playback via shortcut: {}", station.name);
                 }
+                self.push_mpris_state();
             }
+            Message::MprisEvent(event) => match event {
+                mpris::MprisEvent::Ready(tx) => {
+                    info!("MPRIS server ready");
+                    self.mpris_tx = Some(tx);
+                    self.push_mpris_state();
+                }
+                mpris::MprisEvent::Command(cmd) => match cmd {
+                    mpris::MprisCommand::Play => {
+                        if !self.is_playing {
+                            if let Some(station) = &self.current_station {
+                                self.audio
+                                    .play(station.url_resolved.clone(), self.config.volume);
+                                self.is_playing = true;
+                                debug!("MPRIS: Play");
+                                self.push_mpris_state();
+                            }
+                        }
+                    }
+                    mpris::MprisCommand::Pause | mpris::MprisCommand::Stop => {
+                        if self.is_playing {
+                            self.audio.stop();
+                            self.is_playing = false;
+                            debug!("MPRIS: Stop");
+                            self.push_mpris_state();
+                        }
+                    }
+                    mpris::MprisCommand::PlayPause => {
+                        return self.update(Message::TogglePlayPause);
+                    }
+                    mpris::MprisCommand::SetVolume(vol) => {
+                        let volume = mpris::volume_from_mpris(vol);
+                        self.config.volume = volume;
+                        self.audio.set_volume(volume as f32);
+                        debug!("MPRIS: Volume set to {}%", volume);
+                        self.save_config();
+                        self.push_mpris_state();
+                    }
+                    mpris::MprisCommand::Raise => {
+                        return self.update(Message::TogglePopup);
+                    }
+                    mpris::MprisCommand::Quit => {
+                        if self.is_playing {
+                            self.audio.stop();
+                            self.is_playing = false;
+                            self.push_mpris_state();
+                        }
+                    }
+                },
+            },
             Message::KeyboardEvent(event) => {
                 if let Event::Keyboard(keyboard_event) = event {
                     if let cosmic::iced::keyboard::Event::KeyPressed { key, .. } = keyboard_event {
@@ -453,6 +517,24 @@ impl AppModel {
                     .on_press(Message::ToggleFavorite(station.clone())),
             )
             .into()
+    }
+
+    fn push_mpris_state(&self) {
+        if let Some(tx) = &self.mpris_tx {
+            let update = if self.is_playing {
+                if let Some(station) = &self.current_station {
+                    MprisStateUpdate::Playing {
+                        station: Box::new(station.clone()),
+                    }
+                } else {
+                    MprisStateUpdate::Stopped
+                }
+            } else {
+                MprisStateUpdate::Stopped
+            };
+            let _ = tx.send(update);
+            let _ = tx.send(MprisStateUpdate::Volume(self.config.volume));
+        }
     }
 
     fn save_config(&self) {

@@ -64,7 +64,7 @@
 
           cosmic-radio-applet = pkgs.rustPlatform.buildRustPackage rec {
             pname = "cosmic-radio-applet";
-            version = "0.1.0";
+            version = "0.2.0";
 
             src = pkgs.lib.cleanSource ./.;
 
